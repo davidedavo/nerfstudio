@@ -363,6 +363,8 @@ class VanillaDataManagerConfig(DataManagerConfig):
     """
     patch_size: int = 1
     """Size of patch to sample from. If >1, patch-based sampling will be used."""
+    seed: Optional[int] = None
+    """Seed for dataloader workers"""
 
 
 class VanillaDataManager(DataManager):  # pylint: disable=abstract-method
@@ -465,6 +467,7 @@ class VanillaDataManager(DataManager):  # pylint: disable=abstract-method
             num_workers=self.world_size * 4,
             pin_memory=True,
             collate_fn=self.config.collate_fn,
+            seed=self.config.seed
         )
         self.iter_train_image_dataloader = iter(self.train_image_dataloader)
         self.train_pixel_sampler = self._get_pixel_sampler(self.train_dataset, self.config.train_num_rays_per_batch)
@@ -488,6 +491,7 @@ class VanillaDataManager(DataManager):  # pylint: disable=abstract-method
             num_workers=self.world_size * 4,
             pin_memory=True,
             collate_fn=self.config.collate_fn,
+            seed=self.config.seed
         )
         self.iter_eval_image_dataloader = iter(self.eval_image_dataloader)
         self.eval_pixel_sampler = self._get_pixel_sampler(self.eval_dataset, self.config.eval_num_rays_per_batch)
@@ -503,11 +507,13 @@ class VanillaDataManager(DataManager):  # pylint: disable=abstract-method
             input_dataset=self.eval_dataset,
             device=self.device,
             num_workers=self.world_size * 4,
+            seed=self.config.seed
         )
         self.eval_dataloader = RandIndicesEvalDataloader(
             input_dataset=self.eval_dataset,
             device=self.device,
             num_workers=self.world_size * 4,
+            seed=self.config.seed
         )
 
     def next_train(self, step: int) -> Tuple[RayBundle, Dict]:

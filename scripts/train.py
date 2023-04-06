@@ -82,6 +82,8 @@ def train_loop(local_rank: int, world_size: int, config: TrainerConfig, global_r
         config: config file specifying training regimen
     """
     _set_random_seed(config.machine.seed + global_rank)
+    if hasattr(config.pipeline.datamanager, 'seed') and config.pipeline.datamanager.seed is None:
+        config.pipeline.datamanager.seed = config.machine.seed + global_rank
     trainer = config.setup(local_rank=local_rank, world_size=world_size)
     trainer.setup()
     trainer.train()
