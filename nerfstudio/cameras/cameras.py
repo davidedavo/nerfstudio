@@ -318,6 +318,7 @@ class Cameras(TensorDataclass):
         keep_shape: Optional[bool] = None,
         disable_distortion: bool = False,
         aabb_box: Optional[SceneBox] = None,
+        **kwargs
     ) -> RayBundle:
         """Generates rays for the given camera indices.
 
@@ -453,7 +454,7 @@ class Cameras(TensorDataclass):
         # raybundle.shape == (num_rays) when done
         # pylint: disable=protected-access
         raybundle = cameras._generate_rays_from_coords(
-            camera_indices, coords, camera_opt_to_camera, distortion_params_delta, disable_distortion=disable_distortion
+            camera_indices, coords, camera_opt_to_camera, distortion_params_delta, disable_distortion=disable_distortion, **kwargs
         )
 
         # If we have mandated that we don't keep the shape, then we flatten
@@ -494,6 +495,7 @@ class Cameras(TensorDataclass):
         camera_opt_to_camera: Optional[TensorType["num_rays":..., 3, 4]] = None,
         distortion_params_delta: Optional[TensorType["num_rays":..., 6]] = None,
         disable_distortion: bool = False,
+        **kwargs
     ) -> RayBundle:
         """Generates rays for the given camera indices and coords where self isn't jagged
 
