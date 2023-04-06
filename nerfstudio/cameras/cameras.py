@@ -308,6 +308,7 @@ class Cameras(TensorDataclass):
             image_coords = torch.meshgrid(torch.arange(image_height), torch.arange(image_width), indexing="ij")
             image_coords = torch.stack(image_coords, dim=-1) + pixel_offset  # stored as (y, x) coordinates
         return image_coords
+        
 
     def generate_rays(  # pylint: disable=too-many-statements
         self,
