@@ -802,3 +802,9 @@ class Cameras(TensorDataclass):
         self.cy = self.cy * scaling_factor
         self.height = (self.height * scaling_factor).to(torch.int64)
         self.width = (self.width * scaling_factor).to(torch.int64)
+        
+        # Avoid odd sizes
+        if (self.height % 2 == 1).all():
+            self.height -= 1
+        if (self.width % 2 == 1).all():
+            self.width -= 1
