@@ -253,6 +253,7 @@ class Trainer:
 
         # write out any remaining events (e.g., total train time)
         writer.write_out_storage()
+        writer.flush_event_writer()
 
         CONSOLE.rule()
         CONSOLE.print("[bold green]:tada: :tada: :tada: Training Finished :tada: :tada: :tada:", justify="center")

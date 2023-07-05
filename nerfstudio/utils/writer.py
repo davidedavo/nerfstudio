@@ -212,6 +212,15 @@ def setup_event_writer(is_wandb_enabled: bool, is_tensorboard_enabled: bool, log
     CONSOLE.print(f"[bold yellow]{string}")
 
 
+@check_main_thread
+def flush_event_writer() -> None:
+    """Flushes all event writers
+    """
+    for writer in EVENT_WRITERS:
+        if isinstance(writer, Writer):
+            writer.flush()
+
+
 class Writer:
     """Writer class"""
 
@@ -247,6 +256,14 @@ class Writer:
         """
         for key, scalar in scalar_dict.items():
             self.write_scalar(name + "/" + key, float(scalar), step)
+
+    @check_main_thread
+    @abstractmethod
+    def flush(self) -> None:
+        """
+        Flush the writer
+        """
+        pass
 
 
 class TimeWriter:
@@ -302,6 +319,11 @@ class WandbWriter(Writer):
         """
         wandb.config.update(config_dict)
 
+    @check_main_thread
+    def flush(self):
+        pass
+
+
 
 @decorate_all([check_main_thread])
 class TensorboardWriter(Writer):
@@ -324,6 +346,9 @@ class TensorboardWriter(Writer):
             config: config dictionary to write out
         """
         self.tb_writer.add_text("config", str(config_dict))
+    
+    def flush(self) -> None:
+        self.tb_writer.flush()
 
 
 def _cursorup(x: int):
